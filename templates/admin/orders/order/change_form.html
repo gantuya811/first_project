@@ -1,0 +1,12 @@
+{% extends "admin/change_form.html" %}
+
+{% block object-tools-items %}
+  {% if change %}
+    <li>
+      <a href="{% url 'admin:orders_order_transition_status' original.pk %}" class="button">
+        Төлөв өөрчлөх
+      </a>
+    </li>
+  {% endif %}
+  {{ block.super }}
+{% endblock %}

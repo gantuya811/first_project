@@ -1,0 +1,67 @@
+# ============================================================
+# MERRIGE ERP - Nginx reverse proxy тохиргоо (SSL/Production)
+# Энэ файл ".template" өргөтгөлтэй тул nginx image-ийн entrypoint
+# (docker-entrypoint.d/20-envsubst-on-templates.sh) ажиллах үедээ
+# зөвхөн ${SITE_DOMAIN} хувьсагчийг контейнерийн орчны хувьсагчаас
+# орлуулж, /etc/nginx/conf.d/default.conf болгон бичнэ. Nginx-ийн
+# өөрийн built-in хувьсагчид ($host, $remote_addr г.м) орчны
+# хувьсагч биш тул хэвээрээ үлдэнэ.
+# ============================================================
+
+upstream merrige_backend {
+    server web:8000;
+}
+
+# --- Let's Encrypt ACME challenge + HTTP -> HTTPS дахин чиглүүлэлт ---
+server {
+    listen 80;
+    server_name ${SITE_DOMAIN};
+
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
+
+# --- HTTPS үндсэн сервер ---
+server {
+    listen 443 ssl;
+    http2 on;
+    server_name ${SITE_DOMAIN};
+
+    client_max_body_size 20M;
+
+    ssl_certificate     /etc/letsencrypt/live/${SITE_DOMAIN}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/${SITE_DOMAIN}/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers HIGH:!aNULL:!MD5;
+    ssl_prefer_server_ciphers on;
+
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    location /static/ {
+        alias /app/staticfiles/;
+        expires 30d;
+        access_log off;
+    }
+
+    location /media/ {
+        alias /app/media/;
+        expires 7d;
+        access_log off;
+    }
+
+    location / {
+        proxy_pass http://merrige_backend;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_read_timeout 60s;
+    }
+}

@@ -1,0 +1,52 @@
+# --- Environment ---
+.env
+venv/
+.venv/
+env/
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+
+# --- Django ---
+*.sqlite3
+/staticfiles/
+/media/*
+!/media/.gitkeep
+/exports/*
+!/exports/.gitkeep
+/archives/*
+!/archives/.gitkeep
+/logs/*
+!/logs/.gitkeep
+db.sqlite3-journal
+
+# --- Test / Coverage ---
+.coverage
+.pytest_cache/
+htmlcov/
+
+# --- IDE ---
+.vscode/
+.idea/
+.DS_Store
+
+# --- Celery ---
+celerybeat-schedule
+celerybeat.pid
+
+# --- Production SSL (STEP18) ---
+# Домэйн-с хамааралтай, envsubst-ээр үүсгэгдсэн nginx тохиргоо болон
+# Let's Encrypt сертификат/түлхүүрийг git-д хийхгүй.
+docker/nginx/merrige.ssl.conf
+docker/certbot/conf/*
+!docker/certbot/conf/.gitkeep
+docker/certbot/www/*
+!docker/certbot/www/.gitkeep
+
+# --- DB нөөцлөлт (STEP18) ---
+/backups/*
+!/backups/.gitkeep

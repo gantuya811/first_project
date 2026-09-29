@@ -1,0 +1,46 @@
+# --- Виртуал орчин / кэш ---
+venv/
+.venv/
+env/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+
+# --- Git ---
+.git/
+.gitignore
+
+# --- Орчны тохиргоо / нууц мэдээлэл ---
+.env
+.env.*
+!.env.example
+
+# --- Локал өгөгдлийн сан ---
+db.sqlite3
+db.sqlite3-journal
+
+# --- Static/Media/Export (runtime-д container дотор үүснэ) ---
+staticfiles/
+media/*
+!media/.gitkeep
+exports/*
+!exports/.gitkeep
+archives/*
+!archives/.gitkeep
+logs/*
+!logs/.gitkeep
+
+# --- Тест / Coverage ---
+.pytest_cache/
+.coverage
+htmlcov/
+tests/__pycache__/
+
+# --- IDE / OS ---
+.vscode/
+.idea/
+.DS_Store
+
+# --- Docker ---
+docker-compose.override.yml

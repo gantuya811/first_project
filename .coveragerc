@@ -1,0 +1,12 @@
+[run]
+source = apps
+omit =
+    */migrations/*
+    manage.py
+    */apps.py
+
+[report]
+exclude_lines =
+    pragma: no cover
+    raise NotImplementedError
+    if TYPE_CHECKING:

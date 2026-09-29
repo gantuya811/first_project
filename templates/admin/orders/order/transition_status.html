@@ -1,0 +1,16 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+<h1>{{ title }}</h1>
+<p>
+  Захиалга: <strong>{{ order.order_number }}</strong> —
+  Одоогийн төлөв: <strong>{{ order.get_status_display }}</strong>
+</p>
+
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <input type="submit" value="Хадгалах" class="default">
+  <a href="{% url 'admin:orders_order_change' order.pk %}" class="button cancel-link">Цуцлах</a>
+</form>
+{% endblock %}

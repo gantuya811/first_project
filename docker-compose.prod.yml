@@ -1,0 +1,37 @@
+# ============================================================
+# MERRIGE ERP - Production SSL overlay
+# Үндсэн docker-compose.yml-ийг нөхөж, Let's Encrypt SSL сертификат
+# бүхий HTTPS nginx тохиргоог нэмнэ. Ашиглах:
+#
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+#
+# Эхний удаа сертификат авахын өмнө scripts/init_certbot.sh-г ажиллуулна
+# (энэ скрипт docker/nginx/templates/default.conf.template-г envsubst-ээр
+# docker/nginx/merrige.ssl.conf болгон үүсгэнэ). Дэлгэрэнгүйг
+# DEPLOYMENT.md-с үзнэ үү.
+# ============================================================
+services:
+  nginx:
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      # target нь docker-compose.yml дахь default.conf-той ижил тул энэ
+      # SSL хувилбар (merrige.ssl.conf) үүнийг орлоно.
+      - ./docker/nginx/merrige.ssl.conf:/etc/nginx/conf.d/default.conf:ro
+      - static_volume:/app/staticfiles:ro
+      - media_volume:/app/media:ro
+      - ./docker/certbot/conf:/etc/letsencrypt:ro
+      - ./docker/certbot/www:/var/www/certbot:ro
+    depends_on:
+      - web
+      - certbot
+
+  certbot:
+    image: certbot/certbot:latest
+    restart: unless-stopped
+    volumes:
+      - ./docker/certbot/conf:/etc/letsencrypt
+      - ./docker/certbot/www:/var/www/certbot
+    entrypoint: >
+      /bin/sh -c "trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot --quiet; sleep 12h & wait $${!}; done"

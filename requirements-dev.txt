@@ -1,0 +1,13 @@
+# ============================================================
+# MERRIGE ERP - Development-only dependencies
+# ============================================================
+-r requirements.txt
+
+pytest==9.1.1
+pytest-django==4.14.0
+pytest-cov==7.1.0
+factory-boy==3.3.3
+django-debug-toolbar==4.4.6
+flake8==7.3.0
+black==26.5.1
+isort==9.0.1
